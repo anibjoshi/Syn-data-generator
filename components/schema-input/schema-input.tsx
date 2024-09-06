@@ -18,6 +18,9 @@ export function SchemaInput({ value, onChange }: SchemaInputProps) {
         onChange={(e) => onChange(e.target.value)}
         placeholder="CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR(50), email VARCHAR(100));"
         className="w-full h-40 bg-white text-gray-700 placeholder-gray-400 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+        spellCheck="false"
+        autoCorrect="off"
+        autoCapitalize="off"
       />
     </div>
   )
