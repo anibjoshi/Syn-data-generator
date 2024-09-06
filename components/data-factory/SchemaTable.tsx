@@ -46,6 +46,9 @@ export default function SchemaTable({ parsedSchema, database, onSchemaChange }: 
     onSchemaChange(newSchema);
   };
 
+  // Filter out rows with "Unknown" column names
+  const validColumns = parsedSchema.filter(column => column.name !== 'Unknown');
+
   return (
     <div className={styles.container}>
       <h3 className={styles.title}>Schema</h3>
@@ -59,7 +62,7 @@ export default function SchemaTable({ parsedSchema, database, onSchemaChange }: 
             </tr>
           </thead>
           <tbody>
-            {parsedSchema.map((column, index) => (
+            {validColumns.map((column, index) => (
               <tr key={index} className={styles.tableRow}>
                 <td className={styles.tableCell}>
                   <span className="font-medium text-gray-700">{column.name}</span>
