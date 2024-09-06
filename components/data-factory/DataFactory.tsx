@@ -13,6 +13,7 @@ import { Loader2 } from 'lucide-react'
 import { useSchemaParser } from '../../hooks/useSchemaParser'
 import styles from './DataFactory.module.css'
 
+// Define the structure for a column in the schema
 interface ColumnType {
   name: string;
   type: DataType;
@@ -20,6 +21,7 @@ interface ColumnType {
 }
 
 export default function DataFactory() {
+  // State variables
   const [schema, setSchema] = useState('')
   const [database, setDatabase] = useState<DatabaseType>(SUPPORTED_DATABASES[0])
   const [rowCount, setRowCount] = useState('')
@@ -30,20 +32,27 @@ export default function DataFactory() {
   const [isGeneratingFile, setIsGeneratingFile] = useState(false)
   const [hasGenerated, setHasGenerated] = useState(false)
 
+  // Parse the schema using the custom hook
   const parsedSchema = useSchemaParser(schema, database)
 
+  // Handler for schema changes
   const handleSchemaChange = (newSchema: ColumnType[]) => {
     console.log('Schema updated:', newSchema)
   }
 
+  // Handler for generating sample data
   const handleGenerateData = async () => {
     setIsLoading(true)
     setIsGenerated(false)
     try {
+      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000))
+      
+      // Generate mock data
       const mockData = Array.from({ length: 5 }, (_, i) => 
         parsedSchema.reduce((acc, col) => ({ ...acc, [col.name]: `Sample ${col.type} ${i + 1}` }), {})
       )
+      
       setGeneratedData(mockData)
       setIsGenerated(true)
     } catch (error) {
@@ -53,6 +62,7 @@ export default function DataFactory() {
     }
   }
 
+  // Handler for resetting the form
   const handleReset = () => {
     setSchema('')
     setRowCount('')
@@ -61,10 +71,14 @@ export default function DataFactory() {
     setHasGenerated(false)
   }
 
+  // Handler for generating and downloading data
   const handleGenerateAndDownload = async () => {
     setIsGeneratingFile(true)
     try {
+      // Simulate file generation
       await new Promise(resolve => setTimeout(resolve, 3000))
+      
+      // Create a mock file and trigger download
       const blob = new Blob(['Mock file content'], { type: 'text/plain' })
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -82,21 +96,25 @@ export default function DataFactory() {
     }
   }
 
+  // Handler for downloading the previously generated file again
   const handleDownloadAgain = async () => {
-    // Implement the logic to download the previously generated file again
+    // TODO: Implement the logic to download the previously generated file again
   }
 
   return (
     <div className={styles.container}>
       <div className={styles.backgroundGrid}></div>
+      {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerContainer}>
           <h1 className={styles.title}>Data<span className={styles.titleHighlight}>Factory</span></h1>
         </div>
       </header>
 
+      {/* Main content */}
       <main className={styles.main}>
         <div className={styles.contentWrapper}>
+          {/* Left Column - Schema Input and Generate Sample */}
           <div className={styles.column}>
             <DatabaseSelector database={database} setDatabase={setDatabase} />
             <SchemaInput value={schema} onChange={setSchema} />
@@ -127,6 +145,7 @@ export default function DataFactory() {
             </button>
           </div>
 
+          {/* Right Column - Generated Data Preview & Settings */}
           <div className={styles.column}>
             <GeneratedDataPreview generatedData={generatedData} parsedSchema={parsedSchema} isLoading={isLoading} />
             <div className={styles.settingsContainer}>
