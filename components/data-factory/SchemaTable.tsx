@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { HelpCircle } from 'lucide-react'
+import React, { useState } from 'react'
+import { HelpCircle, X } from 'lucide-react' // Import X icon for delete button
 import { DatabaseType, DataType, dataTypes, modifierExamples, modifierPlaceholders } from '../../utils/constants'
 import styles from './SchemaTable.module.css'
+import { Tooltip } from '../Tooltip'
 
 interface SchemaTableProps {
   parsedSchema: ColumnType[];
@@ -17,53 +18,70 @@ interface ColumnType {
 
 export default function SchemaTable({ parsedSchema, database, onSchemaChange }: SchemaTableProps) {
   const [activeTooltip, setActiveTooltip] = useState<number | null>(null);
-  const tooltipRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (tooltipRef.current && !tooltipRef.current.contains(event.target as Node)) {
-        setActiveTooltip(null);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
 
   const uniqueDataTypes = Array.from(new Set(Object.values(dataTypes[database]).flat()));
 
   const handleTypeChange = (index: number, newType: DataType) => {
-    const newSchema = [...parsedSchema];
-    newSchema[index].type = newType;
+    const newSchema = parsedSchema.map((col, i) => 
+      i === index ? { ...col, type: newType } : col
+    );
     onSchemaChange(newSchema);
   };
 
   const handleModifierChange = (index: number, newModifier: string) => {
-    const newSchema = [...parsedSchema];
-    newSchema[index].modifier = newModifier;
+    const newSchema = parsedSchema.map((col, i) => 
+      i === index ? { ...col, modifier: newModifier } : col
+    );
+    onSchemaChange(newSchema);
+  };
+
+  const handleTooltipToggle = (index: number, event: React.MouseEvent) => {
+    if (activeTooltip === index) {
+      setActiveTooltip(null);
+    } else {
+      const rect = event.currentTarget.getBoundingClientRect();
+      setTooltipPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+      });
+      setActiveTooltip(index);
+    }
+  };
+
+  const handleDeleteColumn = (indexToDelete: number) => {
+    const newSchema = parsedSchema.filter((_, index) => index !== indexToDelete);
     onSchemaChange(newSchema);
   };
 
   // Filter out rows with "Unknown" column names
   const validColumns = parsedSchema.filter(column => column.name !== 'Unknown');
 
+  if (validColumns.length === 0) {
+    return (
+      <div className={styles.container}>
+        <h3 className={styles.title}>Schema</h3>
+        <p>No valid columns found in the schema. Please check your CREATE TABLE statement.</p>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container}>
       <h3 className={styles.title}>Schema</h3>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto relative">
         <table className={styles.table}>
           <thead>
             <tr className={styles.tableHeader}>
               <th className={styles.tableHeaderCell}>Column Name</th>
               <th className={styles.tableHeaderCell}>Data Type</th>
               <th className={styles.tableHeaderCell}>Modifiers</th>
+              <th className={styles.tableHeaderCell}></th>
             </tr>
           </thead>
           <tbody>
             {validColumns.map((column, index) => (
-              <tr key={index} className={styles.tableRow}>
+              <tr key={index} className={`${styles.tableRow} group`}>
                 <td className={styles.tableCell}>
                   <span className="font-medium text-gray-700">{column.name}</span>
                 </td>
@@ -74,14 +92,12 @@ export default function SchemaTable({ parsedSchema, database, onSchemaChange }: 
                     className={styles.select}
                   >
                     {uniqueDataTypes.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
+                      <option key={type} value={type}>{type}</option>
                     ))}
                   </select>
                 </td>
                 <td className={styles.tableCell}>
-                  <div className="flex items-center">
+                  <div className="flex items-center space-x-2">
                     <input
                       type="text"
                       value={column.modifier || ''}
@@ -89,31 +105,34 @@ export default function SchemaTable({ parsedSchema, database, onSchemaChange }: 
                       placeholder={modifierPlaceholders[column.type] || "Enter modifiers"}
                       className={styles.input}
                     />
-                    <div className="relative ml-2 flex-shrink-0 group">
-                      <button
-                        onClick={() => setActiveTooltip(activeTooltip === index ? null : index)}
-                        className={styles.tooltipButton}
-                      >
-                        <HelpCircle size={18} />
-                      </button>
-                      {activeTooltip === index && (
-                        <div
-                          ref={tooltipRef}
-                          className={styles.tooltip}
-                          onMouseLeave={() => setActiveTooltip(null)}
-                        >
-                          <div className={styles.tooltipTitle}>Suggestion:</div>
-                          <div dangerouslySetInnerHTML={{ __html: (modifierExamples[column.type] || "No specific modifiers available").replace(/\*\*(.*?)\*\*/g, '<span class="font-semibold text-indigo-600">$1</span>') }} />
-                        </div>
-                      )}
-                    </div>
+                    <button
+                      onClick={(e) => handleTooltipToggle(index, e)}
+                      className={styles.tooltipButton}
+                    >
+                      <HelpCircle size={18} />
+                    </button>
                   </div>
+                </td>
+                <td className={styles.tableCell}>
+                  <button
+                    onClick={() => handleDeleteColumn(index)}
+                    className={`${styles.deleteButton} text-red-500 hover:text-red-700 transition-colors duration-200 opacity-0 group-hover:opacity-100`}
+                    title="Remove column"
+                  >
+                    <X size={18} />
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      <Tooltip
+        content={activeTooltip !== null ? modifierExamples[validColumns[activeTooltip].type] || "No specific modifiers available" : ""}
+        isOpen={activeTooltip !== null}
+        onClose={() => setActiveTooltip(null)}
+        position={tooltipPosition}
+      />
     </div>
   )
 }

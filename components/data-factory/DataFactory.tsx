@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { DatabaseType, SUPPORTED_DATABASES, DataType } from '../../utils/constants'
 import DatabaseSelector from './DatabaseSelector'
 import { SchemaInput } from '../schema-input/schema-input'
@@ -20,9 +20,17 @@ interface ColumnType {
   modifier?: string;
 }
 
+interface ColumnInfo {
+  column_name: string;
+  column_type: string;
+  column_data_type: string; // Changed from DataType to string
+  modifier_list: string[];
+}
+
 export default function DataFactory() {
   // State variables
   const [schema, setSchema] = useState('')
+  const [editedSchema, setEditedSchema] = useState<ColumnType[]>([])
   const [database, setDatabase] = useState<DatabaseType>(SUPPORTED_DATABASES[0])
   const [rowCount, setRowCount] = useState('')
   const [outputFormat, setOutputFormat] = useState('SQL')
@@ -32,12 +40,27 @@ export default function DataFactory() {
   const [isGeneratingFile, setIsGeneratingFile] = useState(false)
   const [hasGenerated, setHasGenerated] = useState(false)
 
-  // Parse the schema using the custom hook
+  // Use the useSchemaParser hook inside the component
   const parsedSchema = useSchemaParser(schema, database)
 
-  // Handler for schema changes
-  const handleSchemaChange = (newSchema: ColumnType[]) => {
-    console.log('Schema updated:', newSchema)
+  // Add useEffect for logging
+  useEffect(() => {
+    if (parsedSchema.length > 0 && editedSchema.length === 0) {
+      setEditedSchema(parsedSchema)
+    }
+  }, [parsedSchema])
+
+  // Handler for schema changes from SchemaInput
+  const handleSchemaInputChange = (newSchema: string) => {
+    console.log('Schema input changed:', newSchema)
+    setSchema(newSchema)
+    setEditedSchema([]) // Reset edited schema when raw input changes
+  }
+
+  // Handler for schema changes from SchemaTable
+  const handleSchemaTableChange = (newSchema: ColumnType[]) => {
+    console.log('Schema table changed:', newSchema)
+    setEditedSchema(newSchema)
   }
 
   // Handler for generating sample data
@@ -48,18 +71,34 @@ export default function DataFactory() {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000))
       
-      // Generate mock data
-      const mockData = Array.from({ length: 5 }, (_, i) => 
-        parsedSchema.reduce((acc, col) => ({ ...acc, [col.name]: `Sample ${col.type} ${i + 1}` }), {})
-      )
+      // Generate column information based on edited schema
+      const columnInfo: ColumnInfo[] = editedSchema.map(col => ({
+        column_name: col.name,
+        column_type: col.type,
+        column_data_type: getBaseColumnType(col.type),
+        modifier_list: parseModifiers(col),
+      }))
       
-      setGeneratedData(mockData)
+      // Log the generated JSON to the console
+      console.log('Generated Column Info:', JSON.stringify(columnInfo, null, 2))
+      
+      setGeneratedData(columnInfo)
       setIsGenerated(true)
     } catch (error) {
       console.error('Error generating data:', error)
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Helper function to get the base column type
+  function getBaseColumnType(columnType: string): string {
+    return columnType.split(/[\s(]/)[0].toLowerCase()
+  }
+
+  // Helper function to parse modifiers from the column type
+  function parseModifiers(column: ColumnType): string[] {
+    return column.modifier ? [column.modifier] : [];
   }
 
   // Handler for resetting the form
@@ -117,16 +156,18 @@ export default function DataFactory() {
           {/* Left Column - Schema Input and Generate Sample */}
           <div className={styles.column}>
             <DatabaseSelector database={database} setDatabase={setDatabase} />
-            <SchemaInput value={schema} onChange={setSchema} />
-            {parsedSchema.length > 0 ? (
+            <SchemaInput value={schema} onChange={handleSchemaInputChange} />
+            {editedSchema.length > 0 ? (
               <SchemaTable
-                parsedSchema={parsedSchema}
+                parsedSchema={editedSchema}
                 database={database}
-                onSchemaChange={handleSchemaChange}
+                onSchemaChange={handleSchemaTableChange}
               />
             ) : (
               <div className={styles.noSchemaMessage}>
-                <p className={styles.noSchemaText}>No schema parsed yet. Enter a CREATE TABLE statement above.</p>
+                <p className={styles.noSchemaText}>
+                  {schema ? "No valid schema parsed. Please check your CREATE TABLE statement." : "No schema parsed yet. Enter a CREATE TABLE statement above."}
+                </p>
               </div>
             )}
             <button
