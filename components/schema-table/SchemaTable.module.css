@@ -1,0 +1,146 @@
+.container {
+  background-color: var(--component-bg-color);
+  backdrop-filter: blur(8px);
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s;
+  border: 1px solid var(--border-color);
+  position: relative;
+  overflow: visible;
+}
+
+.container:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.table {
+  width: 100%;
+}
+
+.tableHeader {
+  background-color: var(--hover-bg-color);
+}
+
+.tableHeaderCell {
+  padding: 0.5rem 1rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.tableRow {
+  border-bottom: 1px solid var(--border-color);
+  position: relative;
+}
+
+.tableRow:hover {
+  background-color: var(--hover-bg-color);
+  transition: background-color 0.15s;
+}
+
+.tableCell {
+  padding: 0.5rem 1rem;
+  position: relative;
+}
+
+.select, .input {
+  width: 100%;
+  background-color: var(--hover-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-color);
+}
+
+.select:focus, .input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--border-color);
+  border-color: transparent;
+}
+
+.tooltipButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+}
+
+.tooltipButton:hover {
+  color: var(--text-color);
+}
+
+.tooltip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--component-bg-color);
+  color: var(--text-color);
+  font-size: 0.75rem;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  width: 16rem;
+  white-space: pre-wrap;
+  border: 1px solid var(--border-color);
+  z-index: 10;
+  margin-top: 0.5rem;
+}
+
+.tooltipTitle {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--text-color);
+}
+
+.deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deleteButton:hover {
+  background-color: var(--hover-bg-color);
+  opacity: 1;
+}
+
+.actionCell {
+  width: 40px;
+  padding: 0 !important;
+}
+
+.tableRow:hover .deleteButton {
+  opacity: 1;
+}
+
+.columnName {
+  font-weight: medium;
+  color: var(--text-color);
+}
+
+.unsupportedType {
+  background-color: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.5);
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  color: var(--text-color);
+  font-size: 0.875rem;
+}

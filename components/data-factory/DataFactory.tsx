@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect } from 'react'
 import { DatabaseType, SUPPORTED_DATABASES, DataType } from '../../utils/constants'
-import DatabaseSelector from './DatabaseSelector'
+import DatabaseSelector from '../database-selector/DatabaseSelector'
 import { SchemaInput } from '../schema-input/schema-input'
 import { RowCountInput } from '../row-count-input/row-count-input'
-import SchemaTable from './SchemaTable'
-import OutputFormatSelector from './OutputFormatSelector'
-import GeneratedDataPreview from './GeneratedDataPreview'
-import FileInformation from './FileInformation'
-import { Loader2 } from 'lucide-react'
+import SchemaTable from '../schema-table/SchemaTable'
+import OutputFormatSelector from '../output-format-selector/OutputFormatSelector'
+import GeneratedDataPreview from '../generated-data-preview/GeneratedDataPreview'
+import FileInformation from '../file-information/FileInformation'
+import { Loader2, Moon, Sun } from 'lucide-react'
 import { useSchemaParser } from '../../hooks/useSchemaParser'
 import styles from './DataFactory.module.css'
 
@@ -39,6 +39,7 @@ export default function DataFactory() {
   const [isLoading, setIsLoading] = useState(false)
   const [isGeneratingFile, setIsGeneratingFile] = useState(false)
   const [hasGenerated, setHasGenerated] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   // Use the useSchemaParser hook inside the component
   const parsedSchema = useSchemaParser(schema, database)
@@ -140,13 +141,21 @@ export default function DataFactory() {
     // TODO: Implement the logic to download the previously generated file again
   }
 
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${isDarkMode ? styles.darkMode : styles.lightMode}`}>
       <div className={styles.backgroundGrid}></div>
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerContainer}>
           <h1 className={styles.title}>Data<span className={styles.titleHighlight}>Factory</span></h1>
+          <button onClick={toggleTheme} className={styles.themeToggle}>
+            {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
+            <span className={styles.themeToggleText}>Toggle Theme</span>
+          </button>
         </div>
       </header>
 

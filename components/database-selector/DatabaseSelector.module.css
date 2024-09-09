@@ -1,11 +1,11 @@
 .container {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: var(--component-bg-color);
   backdrop-filter: blur(8px);
   padding: 1.5rem;
   border-radius: 0.75rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   transition: all 0.3s;
-  border: 1px solid rgba(99, 102, 241, 0.1);
+  border: 1px solid var(--border-color);
 }
 
 .container:hover {
@@ -17,7 +17,7 @@
   font-size: 1.125rem;
   font-weight: 500;
   margin-bottom: 1rem;
-  color: #4338ca;
+  color: var(--text-color);
 }
 
 .buttonContainer {
@@ -34,21 +34,28 @@
   transition: all 0.3s;
   position: relative;
   overflow: hidden;
+  background-color: var(--hover-bg-color);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .buttonSelected {
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 0 4px var(--border-color);
   transform: scale(1.05);
 }
 
 .button:hover:not(.buttonSelected) {
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 0 0 2px var(--border-color);
   transform: scale(1.05);
 }
 
 .image {
   padding: 0.5rem;
   transition: transform 0.3s;
+  background-color: #FAFAFA;
+  border-radius: 0.25rem;
 }
 
 .image:hover {

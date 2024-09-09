@@ -1,11 +1,11 @@
 .container {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: var(--component-bg-color);
   backdrop-filter: blur(8px);
   padding: 1.5rem;
   border-radius: 0.75rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   transition: all 0.3s;
-  border: 1px solid rgba(99, 102, 241, 0.1);
+  border: 1px solid var(--border-color);
 }
 
 .container:hover {
@@ -17,7 +17,7 @@
   font-size: 1.125rem;
   font-weight: 500;
   margin-bottom: 1rem;
-  color: #4338ca;
+  color: var(--text-color);
 }
 
 .selectContainer {
@@ -27,18 +27,18 @@
 .select {
   display: block;
   width: 100%;
-  background-color: white;
-  border: 1px solid #d1d5db;
+  background-color: var(--hover-bg-color);
+  border: 1px solid var(--border-color);
   border-radius: 0.375rem;
   padding: 0.5rem 2.5rem 0.5rem 0.75rem;
   font-size: 1rem;
-  color: #374151;
+  color: var(--text-color);
   appearance: none;
 }
 
 .select:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 0 2px var(--border-color);
   border-color: transparent;
 }
 
@@ -48,5 +48,5 @@
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
-  color: #9ca3af;
+  color: var(--text-color);
 }

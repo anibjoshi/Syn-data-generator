@@ -15,7 +15,7 @@ export default function GeneratedDataPreview({ generatedData, parsedSchema, isLo
       <div className={styles.previewArea}>
         {isLoading ? (
           <div className={styles.loadingContainer}>
-            <Loader2 className="animate-spin text-indigo-600 mr-2" size={24} />
+            <Loader2 className={`${styles.loadingSpinner}`} size={24} />
             <p className={styles.loadingText}>Generating data...</p>
           </div>
         ) : generatedData ? (
