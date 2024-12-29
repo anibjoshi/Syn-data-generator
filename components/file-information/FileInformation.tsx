@@ -1,15 +1,18 @@
 import React from 'react'
 import { Download, RefreshCw, Loader2 } from 'lucide-react'
 import styles from './FileInformation.module.css'
+import { estimateFileSize } from '../../utils/file-utils'
+import { OutputFormat } from '../../types/data-factory'
 
 interface FileInformationProps {
   rowCount: string;
-  outputFormat: string;
+  outputFormat: OutputFormat;
   onReset: () => void;
   onGenerateAndDownload: () => Promise<void>;
   onDownloadAgain: () => Promise<void>;
   isGenerating: boolean;
   hasGenerated: boolean;
+  data: unknown;
 }
 
 export default function FileInformation({ 
@@ -19,14 +22,19 @@ export default function FileInformation({
   onGenerateAndDownload,
   onDownloadAgain,
   isGenerating,
-  hasGenerated
+  hasGenerated,
+  data
 }: FileInformationProps) {
+  const estimatedSize = estimateFileSize(data, outputFormat, rowCount)
+
   return (
     <div className={styles.container}>
       <h3 className={styles.title}>File Information</h3>
       <p className={styles.info}>Rows to generate: {rowCount}</p>
       <p className={styles.info}>File format: {outputFormat}</p>
-      <p className={styles.info}>Estimated file size: Calculating...</p>
+      <div className={styles.fileSize}>
+        Estimated file size: {estimatedSize}
+      </div>
       <div className={styles.buttonContainer}>
         {!hasGenerated ? (
           <button 

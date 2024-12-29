@@ -1,35 +1,28 @@
 import React from 'react'
-import { ChevronDown } from 'lucide-react'
 import styles from './OutputFormatSelector.module.css'
+import { OUTPUT_FORMATS, OutputFormat } from '../../types/data-factory';
 
 interface OutputFormatSelectorProps {
-  outputFormat: string;
-  setOutputFormat: (format: string) => void;
+  outputFormat: OutputFormat;
+  setOutputFormat: (format: OutputFormat) => void;
 }
 
 export default function OutputFormatSelector({ outputFormat, setOutputFormat }: OutputFormatSelectorProps) {
-  const outputFormats = ['SQL', 'CSV', 'JSON', 'Parquet', 'Avro']
-
   return (
     <div className={styles.container}>
-      <label htmlFor="outputFormat" className={styles.label}>
-        Select Output Format
-      </label>
-      <div className={styles.selectContainer}>
-        <select
-          id="outputFormat"
-          value={outputFormat}
-          onChange={(e) => setOutputFormat(e.target.value)}
-          className={styles.select}
-        >
-          {outputFormats.map((format) => (
-            <option key={format} value={format}>
-              {format}
-            </option>
-          ))}
-        </select>
-        <ChevronDown className={styles.icon} />
-      </div>
+      <label htmlFor="outputFormat" className={styles.label}>Output Format:</label>
+      <select
+        id="outputFormat"
+        value={outputFormat}
+        onChange={(e) => setOutputFormat(e.target.value as OutputFormat)}
+        className={styles.select}
+      >
+        {Object.values(OUTPUT_FORMATS).map((format) => (
+          <option key={format} value={format}>
+            {format}
+          </option>
+        ))}
+      </select>
     </div>
   )
 }
