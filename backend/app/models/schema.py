@@ -8,6 +8,6 @@ class ColumnSchema(BaseModel):
     modifier_list: List[str]
 
 class InputSchema(BaseModel):
-    schema: List[ColumnSchema]
+    columns: List[ColumnSchema]
     rowCount: int
     outputFormat: str 

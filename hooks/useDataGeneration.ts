@@ -13,7 +13,7 @@ export function useDataGeneration() {
     setError(null);
     
     const request = {
-      schema: schema.map(col => ({
+      columns: schema.map(col => ({
         column_name: col.name,
         column_type: col.type,
         column_data_type: col.type,
@@ -36,7 +36,7 @@ export function useDataGeneration() {
 
   async function generateFile(schema: ColumnType[], rowCount: number, outputFormat: string) {
     const request = {
-      schema: schema.map(col => ({
+      columns: schema.map(col => ({
         column_name: col.name,
         column_type: col.type,
         column_data_type: col.type,

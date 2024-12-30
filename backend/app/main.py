@@ -36,7 +36,6 @@ app.add_middleware(
 
 @app.post("/api/process")
 async def process_data(input_data: InputSchema):
-    print(input_data)
     try:
         if not 1 <= input_data.rowCount <= 10000:
             raise HTTPException(
@@ -45,19 +44,22 @@ async def process_data(input_data: InputSchema):
             )
 
         results = []
-        for _ in range(input_data.rowCount):
-            row = data_service.generate_row(input_data.schema)
-            results.append(row)
-        print(results)
+        batch_size = 20
+        
+        # Generate data in batches
+        for i in range(0, input_data.rowCount, batch_size):
+            current_batch_size = min(batch_size, input_data.rowCount - i)
+            batch_results = await data_service.generate_batch(input_data.columns, current_batch_size)
+            results.extend(batch_results)
+
         return {
-            "results": results,
+            "results": results[:input_data.rowCount],  # Ensure we don't return more than requested
             "metadata": {
                 "generated_rows": len(results),
                 "timestamp": datetime.now().isoformat(),
-                "schema_processed": [col.column_name for col in input_data.schema 
+                "schema_processed": [col.column_name for col in input_data.columns 
                                    if col.column_name != "Unknown"],
-                "faker_generated_columns": [col.column_name for col in input_data.schema 
-                                         if faker_service.get_faker_function(col.column_name)]
+                "generation_method": "AI with fallback to Faker/Basic"
             }
         }
 
