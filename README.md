@@ -2,7 +2,7 @@
 
 DataFactory is a modern web application designed to help developers effortlessly generate realistic test data based on database schemas. With an intuitive interface and support for multiple databases, DataFactory streamlines the process of creating sample datasets that match your database structure, ensuring accurate and meaningful testing.
 
-![DataFactory Screenshot](public/images/screenshot.png)
+![DataFactory Screenshot](public/images/logo.png)
 
 ## Key Features
 
