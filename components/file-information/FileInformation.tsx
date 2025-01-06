@@ -2,96 +2,83 @@ import React from 'react'
 import { Download, RefreshCw, Loader2 } from 'lucide-react'
 import styles from './FileInformation.module.css'
 import { estimateFileSize } from '../../utils/file-utils'
-import { OutputFormat } from '../../types/data-factory'
+import { OutputFormat, GeneratedRow } from '../../types/data-factory'
+import { Progress } from '../ui/progress'
 
 interface FileInformationProps {
   rowCount: string;
   outputFormat: OutputFormat;
   onReset: () => void;
-  onGenerateAndDownload: () => Promise<void>;
-  onDownloadAgain: () => Promise<void>;
+  onGenerateAndDownload: () => void;
+  onDownloadAgain: () => void;
   isGenerating: boolean;
   hasGenerated: boolean;
-  data: unknown;
+  data: GeneratedRow[];
+  progress: number;
+  isFinishing: boolean;
 }
 
-export default function FileInformation({ 
-  rowCount, 
-  outputFormat, 
-  onReset, 
+export default function FileInformation({
+  rowCount,
+  outputFormat,
+  onReset,
   onGenerateAndDownload,
   onDownloadAgain,
   isGenerating,
   hasGenerated,
-  data
+  data,
+  progress,
+  isFinishing
 }: FileInformationProps) {
-  const estimatedSize = estimateFileSize(data, outputFormat, rowCount)
+  const estimatedSize = estimateFileSize(data, outputFormat, rowCount);
 
   return (
     <div className={styles.container}>
       <h3 className={styles.title}>File Information</h3>
-      <p className={styles.info}>Rows to generate: {rowCount}</p>
-      <p className={styles.info}>File format: {outputFormat}</p>
-      <div className={styles.fileSize}>
-        Estimated file size: {estimatedSize}
+      
+      <div className={styles.settingsSection}>
+        <h4 className={styles.settingsTitle}>Generation Settings</h4>
+        <p>Rows to generate: {rowCount}</p>
+        <p>File format: {outputFormat}</p>
+        <p>Estimated file size: {estimatedSize}</p>
       </div>
-      <div className={styles.buttonContainer}>
-        {!hasGenerated ? (
-          <button 
-            onClick={onGenerateAndDownload}
-            disabled={isGenerating}
-            className={`${styles.button} ${styles.primaryButton} ${isGenerating ? styles.disabledButton : ''}`}
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className={`${styles.buttonIcon} animate-spin`} />
-                Generating...
-              </>
-            ) : (
-              <>
-                <Download className={styles.buttonIcon} />
-                Generate and Download
-              </>
-            )}
-          </button>
+      
+      <button
+        onClick={onGenerateAndDownload}
+        disabled={isGenerating}
+        className={`${styles.generateButton} ${isGenerating ? styles.generateButtonDisabled : ''}`}
+      >
+        {isGenerating ? (
+          <div className={styles.generatingContainer}>
+            <div className={styles.progressText}>
+              {isFinishing ? 'Finishing up...' : `Generating... ${progress}%`}
+            </div>
+            <Progress value={progress} className={styles.progressBar} />
+          </div>
         ) : (
           <>
-            <button 
-              onClick={onGenerateAndDownload}
-              disabled={isGenerating}
-              className={`${styles.button} ${styles.primaryButton} ${isGenerating ? styles.disabledButton : ''}`}
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className={`${styles.buttonIcon} animate-spin`} />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <RefreshCw className={styles.buttonIcon} />
-                  Generate New
-                </>
-              )}
-            </button>
-            <button 
-              onClick={onDownloadAgain}
-              disabled={isGenerating}
-              className={`${styles.button} ${styles.secondaryButton}`}
-            >
-              <Download className={styles.buttonIcon} />
-              Download Again
-            </button>
+            <Download className={styles.buttonIcon} />
+            Generate and Download
           </>
         )}
+      </button>
+      
+      {hasGenerated && (
         <button
-          onClick={onReset}
-          disabled={isGenerating}
-          className={`${styles.button} ${styles.resetButton} ${isGenerating ? styles.disabledButton : ''}`}
+          onClick={onDownloadAgain}
+          className={styles.downloadButton}
         >
           <RefreshCw className={styles.buttonIcon} />
-          Generate Another Dataset
+          Download Again
         </button>
-      </div>
+      )}
+      
+      <button
+        onClick={onReset}
+        className={styles.resetButton}
+      >
+        Start Over
+      </button>
     </div>
-  )
+  );
 }
