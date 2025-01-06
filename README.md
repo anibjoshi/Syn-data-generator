@@ -39,6 +39,7 @@ DataFactory is a modern web application designed to help developers effortlessly
 - **Tailwind CSS**
 
 ### Backend
+- **OpenAI API**
 - **Python FastAPI**
 - **Faker** (data generation)
 - **SQLAlchemy** (database integration)
@@ -98,35 +99,9 @@ Ensure the following are installed on your system:
 
 ---
 
-## Contribution Guidelines
-
-Contributions are always welcome! Follow these steps to get started:
-
-1. **Fork the repository**:
-   ```bash
-   git fork https://github.com/yourusername/syn-data-generator.git
-   ```
-2. **Create a feature branch**:
-   ```bash
-   git checkout -b feature/AmazingFeature
-   ```
-3. **Commit your changes**:
-   ```bash
-   git commit -m "Add some AmazingFeature"
-   ```
-4. **Push to the branch**:
-   ```bash
-   git push origin feature/AmazingFeature
-   ```
-5. **Open a Pull Request**.
-
-Feel free to submit bug reports, suggest new features, or improve documentation.
-
----
-
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+This project is licensed under the MIT License.
 
 ---
 
