@@ -42,7 +42,6 @@ DataFactory is a modern web application designed to help developers effortlessly
 - **OpenAI API**
 - **Python FastAPI**
 - **Faker** (data generation)
-- **SQLAlchemy** (database integration)
 
 ---
 

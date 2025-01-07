@@ -5,9 +5,12 @@ import json
 import asyncio
 import logging
 from aiohttp import ClientSession
+import aiohttp
 from ..models.schema import ColumnSchema
 from .faker_service import FakerService
 from dotenv import load_dotenv
+import ssl
+import certifi
 
 class DataService:
     def __init__(self, faker_service: FakerService, generators: Dict):
@@ -24,6 +27,9 @@ class DataService:
         self.max_tokens_per_minute = 6250000
         self.max_attempts = 3
         self.logging_level = logging.INFO
+
+        # Add SSL context configuration
+        self.ssl_context = ssl.create_default_context(cafile=certifi.where())
 
     async def generate_data(
         self,
@@ -71,7 +77,8 @@ class DataService:
 
     async def process_requests(self, requests: List[Dict], save_filepath: str = None) -> List[Dict[str, Any]]:
         """Process OpenAI API requests with parallel handling."""
-        async with ClientSession() as session:
+        # Create ClientSession with SSL context
+        async with ClientSession(connector=aiohttp.TCPConnector(ssl=self.ssl_context)) as session:
             tasks = [
                 self.call_api_with_retry(session, request, idx)
                 for idx, request in enumerate(requests)
